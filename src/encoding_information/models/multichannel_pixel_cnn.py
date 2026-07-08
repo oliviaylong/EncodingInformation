@@ -378,9 +378,10 @@ class _MultiChannelPixelCNNFlaxImpl(nn.Module):
         # log|Σ| from L only (Σ = L Lᵀ): log|Σ| = 2 ∑ᵢ log(Lᵢᵢ); batched over (... , d, d)
         diag_l = np.diagonal(cholesky_l, axis1=-2, axis2=-1)
         log_det_cov = 2.0 * np.sum(np.log(diag_l), axis=-1)
-        # avoid inversion: (y - mu)ᵀ Σ⁻¹ (y - mu) = ||L⁻¹ (y - mu)||² = ||z||² where z = L⁻¹ (y - mu) 
-        r = y - mean 
-        z = solve_triangular(cholesky_l, r, lower=True)
+        # avoid inversion: (y - mu)ᵀ Σ⁻¹ (y - mu) = ||L⁻¹ (y - mu)||² = ||z||² where z = L⁻¹ (y - mu)
+        # JAX expects batched vector solves to use an explicit trailing column dimension., adding a new axis for this dimension
+        r = y - mean
+        z = solve_triangular(cholesky_l, r[..., None], lower=True).squeeze(-1)
         matrix_sum = np.sum(z * z, axis=-1) 
         out = -1.0 * half_d_log_two_pi - 0.5 * log_det_cov - 0.5 * matrix_sum
         return out
