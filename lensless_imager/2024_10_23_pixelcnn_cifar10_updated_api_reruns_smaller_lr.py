@@ -22,7 +22,9 @@ import os
 from jax import config
 config.update("jax_enable_x64", True)
 import sys 
-sys.path.append('/home/lakabuli/workspace/EncodingInformation/src')
+#sys.path.append('/home/lakabuli/workspace/EncodingInformation/src')
+sys.path.append('/Users/olivialong/Desktop/UC Berkeley/Waller group/EncodingInformation/src')
+sys.path.append('/Users/olivialong/Desktop/UC Berkeley/Waller group/EncodingInformation/lensless_imager')
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID" 
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
@@ -34,6 +36,7 @@ import jax.numpy as np
 import numpy as onp
 import tensorflow as tf
 import tensorflow.keras as tfk
+import matplotlib.pyplot as plt
 
 
 from lensless_helpers import *
@@ -56,6 +59,26 @@ two_psf = load_two_lens_uniform(32)
 three_psf = load_three_lens_uniform(32)
 four_psf = load_four_lens_uniform(32)
 five_psf = load_five_lens_uniform(32)
+
+print(type(diffuser_psf))
+print("shape of diffuser_psf: ", np.shape(diffuser_psf))
+plt.imshow(diffuser_psf)
+plt.title("diffuser psf")
+
+plt.figure()
+plt.imshow(one_psf)
+plt.title("one psf")
+print("shape of one_psf: ", np.shape(one_psf))
+
+plt.figure()
+plt.imshow(two_psf)
+plt.title("two psf")
+print("shape of two_psf: ", np.shape(two_psf))
+
+plt.figure()
+plt.imshow(five_psf)
+plt.title("five psf")
+print("shape of five_psf: ", np.shape(five_psf))
 
 # %%
 # set seed values for reproducibility
@@ -105,7 +128,7 @@ for photon_count in mean_photon_count_list:
             data /= onp.mean(data)
             data *= photon_count 
             # make tiled data
-            random_data, random_labels = generate_random_tiled_data(data, labels, seed_value)
+            random_data, random_labels = generate_random_tiled_data(data, labels, seed_value) # func from lensless_helpers.py
 
             if psf_pattern is None:
                 start_idx = data.shape[-1] // 2 

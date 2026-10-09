@@ -4,6 +4,7 @@ from tqdm import tqdm
 # import tensorflow as tf
 # import tensorflow.keras as tfk
 import gc
+import os
 import warnings
 
 import skimage
@@ -12,6 +13,9 @@ from skimage.transform import resize
 
 from scipy.signal import fftconvolve
 from scipy.ndimage import gaussian_filter, sobel
+
+# PSF images live next to this file, so loading works from any working directory
+PSF_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'psfs')
 
 # from tensorflow.keras.optimizers import SGD
 
@@ -349,7 +353,7 @@ def run_network_cifar(data, labels, seed_value, training_fraction, testing_fract
 
 
 def load_diffuser_psf():
-    diffuser_psf = skimage.io.imread('psfs/diffuser_psf.png')
+    diffuser_psf = skimage.io.imread(os.path.join(PSF_DIR, 'diffuser_psf.png'))
     diffuser_psf = diffuser_psf[:,:,1]
     diffuser_resize = diffuser_psf[200:500, 250:550]
     diffuser_resize = resize(diffuser_resize, (100, 100), anti_aliasing=True)  #resize(diffuser_psf, (28, 28))
@@ -358,7 +362,7 @@ def load_diffuser_psf():
     return diffuser_region
 
 def load_phlat_psf():
-    phlat_psf = skimage.io.imread('psfs/phlat_psf.png')
+    phlat_psf = skimage.io.imread(os.path.join(PSF_DIR, 'phlat_psf.png'))
     phlat_psf = phlat_psf[900:2900, 1500:3500, 1]
     phlat_psf = resize(phlat_psf, (200, 200), anti_aliasing=True)
     phlat_region = phlat_psf[10:38, 20:48]
@@ -377,7 +381,7 @@ def load_4_psf():
 
 # 6/9/23 added rml option
 def load_rml_psf():
-    rml_psf = skimage.io.imread('psfs/psf_8holes.png')
+    rml_psf = skimage.io.imread(os.path.join(PSF_DIR, 'psf_8holes.png'))
     rml_psf = rml_psf[1000:3000, 1500:3500]
     rml_psf_resize = resize(rml_psf, (100, 100), anti_aliasing=True)
     rml_psf_region = rml_psf_resize[40:100, :60]
@@ -386,7 +390,7 @@ def load_rml_psf():
     return rml_psf_region
 
 def load_rml_new_psf():
-    rml_psf = skimage.io.imread('psfs/psf_8holes.png')
+    rml_psf = skimage.io.imread(os.path.join(PSF_DIR, 'psf_8holes.png'))
     rml_psf = rml_psf[1000:3000, 1500:3500]
     rml_psf_small = resize(rml_psf, (85, 85), anti_aliasing=True)
     rml_psf_region = rml_psf_small[52:80, 10:38]
@@ -453,7 +457,7 @@ def load_four_lens_32():
     return psf
 
 def load_diffuser_32():
-    diffuser_psf = skimage.io.imread('/home/lakabuli/workspace/EncodingInformation/lensless_imager/psfs/diffuser_psf.png')
+    diffuser_psf = skimage.io.imread(os.path.join(PSF_DIR, 'diffuser_psf.png'))
     diffuser_psf = diffuser_psf[:,:,1]
     diffuser_resize = diffuser_psf[200:500, 250:550]
     diffuser_resize = resize(diffuser_resize, (100, 100), anti_aliasing=True)  #resize(diffuser_psf, (28, 28))
